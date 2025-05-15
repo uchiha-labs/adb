@@ -1,0 +1,24 @@
+// Sample data
+db.students.insertMany([
+  { name: "John", age: 21 },
+  { name: "Alice", age: 22 },
+  { name: "Bob", age: 23 }
+]);
+
+// Create an immortal cursor using noCursorTimeout option
+const cursor = db.students.find().addOption(DBQuery.Option.noTimeout);
+
+// Iterate through the cursor
+while (cursor.hasNext()) {
+  printjson(cursor.next());
+}
+
+// Manually close the cursor (optional in shell, recommended in drivers)
+cursor.close();
+
+
+/* Output:
+{ "_id" : ObjectId("..."), "name" : "John", "age" : 21 }
+{ "_id" : ObjectId("..."), "name" : "Alice", "age" : 22 }
+{ "_id" : ObjectId("..."), "name" : "Bob", "age" : 23 }
+*/

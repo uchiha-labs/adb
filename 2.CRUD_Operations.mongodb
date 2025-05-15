@@ -1,0 +1,45 @@
+// 1. Create
+db.students.insertOne({ name: "John", age: 21, course: "B.Tech" });
+db.students.insertMany([
+  { name: "Alice", age: 22, course: "B.Sc" },
+  { name: "Bob", age: 23, course: "BCA" }
+]);
+
+// 2. Read
+db.students.find();
+db.students.find({ name: "John" });
+db.students.findOne({ age: 22 });
+
+// 3. Update
+db.students.updateOne(
+  { name: "John" },
+  { $set: { age: 22 } }
+);
+db.students.updateMany(
+  { course: "BCA" },
+  { $set: { course: "B.Sc" } }
+);
+
+// 4. Delete
+db.students.deleteOne({ name: "Bob" });
+db.students.deleteMany({ course: "B.Sc" });
+
+
+/* Output:
+1. Create
+{ acknowledged: true, insertedId: ObjectId("...") }
+{ acknowledged: true, insertedIds: [ ObjectId("..."), ObjectId("...") ] }
+
+2. Read
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+3. Update
+{ acknowledged: true, matchedCount: 1, modifiedCount: 1 }
+{ acknowledged: true, matchedCount: 1, modifiedCount: 1 }
+
+4. Delete
+{ acknowledged: true, deletedCount: 1 }
+{ acknowledged: true, deletedCount: 2 }
+*/

@@ -1,0 +1,44 @@
+// ===== MongoDB Capped Collection =====
+
+// 1. Create a capped collection (max 5 documents, max size 1MB)
+db.createCollection("logs", {
+  capped: true,
+  size: 1024 * 1024,  // 1MB in bytes
+  max: 5              // max 5 documents
+});
+
+// 2. Insert documents into capped collection
+db.logs.insertMany([
+  { event: "login", user: "Alice", time: new Date() },
+  { event: "logout", user: "Bob", time: new Date() },
+  { event: "purchase", user: "Alice", time: new Date() },
+  { event: "login", user: "Charlie", time: new Date() },
+  { event: "logout", user: "Alice", time: new Date() }
+]);
+
+// 3. Insert 6th document, oldest doc will be automatically removed (due to capped limit)
+db.logs.insertOne({ event: "login", user: "David", time: new Date() });
+
+// 4. Query all documents (returns only latest 5)
+db.logs.find().sort({ $natural: 1 }); // $natural: 1 to read in insertion order
+
+/* Sample Output:
+
+1. createCollection()
+{ "ok" : 1 }
+
+2. insertMany()
+{ "acknowledged" : true, "insertedIds" : [ ObjectId(...), ... ] }
+
+3. insertOne()
+{ "acknowledged" : true, "insertedId" : ObjectId(...) }
+
+4. find()
+{ _id: ObjectId(...), event: "logout", user: "Bob", time: ISODate(...) }
+{ _id: ObjectId(...), event: "purchase", user: "Alice", time: ISODate(...) }
+{ _id: ObjectId(...), event: "login", user: "Charlie", time: ISODate(...) }
+{ _id: ObjectId(...), event: "logout", user: "Alice", time: ISODate(...) }
+{ _id: ObjectId(...), event: "login", user: "David", time: ISODate(...) }
+
+Note: The first inserted doc { event: "login", user: "Alice" } is removed automatically after 6th insert.
+*/

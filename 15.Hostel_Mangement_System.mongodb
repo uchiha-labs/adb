@@ -1,0 +1,85 @@
+// 1. Create collections and insert data
+
+// Students
+db.students.insertMany([
+  { _id: 1, name: "John", age: 21, gender: "Male", course: "B.Tech", contact: "9876543210" },
+  { _id: 2, name: "Alice", age: 22, gender: "Female", course: "B.Sc", contact: "8765432109" },
+  { _id: 3, name: "Bob", age: 23, gender: "Male", course: "BCA", contact: "7654321098" }
+]);
+
+// Rooms
+db.rooms.insertMany([
+  { _id: 101, roomType: "Single", capacity: 1, occupied: 0 },
+  { _id: 102, roomType: "Double", capacity: 2, occupied: 1 },
+  { _id: 103, roomType: "Double", capacity: 2, occupied: 2 }
+]);
+
+// Wardens
+db.wardens.insertMany([
+  { _id: 1, name: "Mr. Sharma", contact: "9999999999", block: "A" },
+  { _id: 2, name: "Mrs. Devi", contact: "8888888888", block: "B" }
+]);
+
+// Allocations
+db.allocations.insertMany([
+  { studentId: 1, roomId: 101, dateAllocated: ISODate("2024-06-01") },
+  { studentId: 2, roomId: 102, dateAllocated: ISODate("2024-06-01") },
+  { studentId: 3, roomId: 103, dateAllocated: ISODate("2024-06-01") }
+]);
+
+
+// Read Operations
+// Get all students
+db.students.find();
+
+// Find student by name
+db.students.find({ name: "Alice" });
+
+// Get all rooms
+db.rooms.find();
+
+// Show all allocations with student and room info (JOIN using aggregation)
+db.allocations.aggregate([
+  {
+    $lookup: {
+      from: "students",
+      localField: "studentId",
+      foreignField: "_id",
+      as: "student"
+    }
+  },
+  {
+    $lookup: {
+      from: "rooms",
+      localField: "roomId",
+      foreignField: "_id",
+      as: "room"
+    }
+  }
+]);
+
+
+// Update Operations
+db.students.updateOne(
+  { name: "John" },
+  { $set: { contact: "9990011223" } }
+);
+
+// Increase room occupancy
+db.rooms.updateOne(
+  { _id: 102 },
+  { $inc: { occupied: 1 } }
+);
+
+// Delete Operations
+db.students.deleteOne({ name: "Bob" });
+
+// Delete all allocations for a room
+db.allocations.deleteMany({ roomId: 103 });
+
+
+/* Sample Output:
+{ "_id" : 1, "name" : "John", "age" : 21, "gender" : "Male", "course" : "B.Tech", "contact" : "9876543210" }
+{ "_id" : 2, "name" : "Alice", "age" : 22, "gender" : "Female", "course" : "B.Sc", "contact" : "8765432109" }
+{ "_id" : 3, "name" : "Bob", "age" : 23, "gender" : "Male", "course" : "BCA", "contact" : "7654321098" }
+*/

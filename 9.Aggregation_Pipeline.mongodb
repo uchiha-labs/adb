@@ -1,0 +1,44 @@
+// ===== MongoDB Aggregation Pipeline Example =====
+
+// Sample collection: sales
+db.sales.insertMany([
+  { item: "apple", quantity: 5, price: 10, store: "A", date: new Date("2024-01-01") },
+  { item: "banana", quantity: 10, price: 5, store: "A", date: new Date("2024-01-02") },
+  { item: "apple", quantity: 15, price: 10, store: "B", date: new Date("2024-01-03") },
+  { item: "banana", quantity: 20, price: 5, store: "B", date: new Date("2024-01-04") },
+  { item: "orange", quantity: 10, price: 8, store: "A", date: new Date("2024-01-05") },
+]);
+
+// Aggregation pipeline:
+// 1. Match sales in store "A"
+// 2. Group by item and sum total quantity and total sales (quantity * price)
+// 3. Sort by total sales descending
+// 4. Project to show item, total quantity, total sales only
+
+db.sales.aggregate([
+  { $match: { store: "A" } },
+  { 
+    $group: { 
+      _id: "$item", 
+      totalQuantity: { $sum: "$quantity" },
+      totalSales: { $sum: { $multiply: ["$quantity", "$price"] } }
+    } 
+  },
+  { $sort: { totalSales: -1 } },
+  { 
+    $project: {
+      _id: 0,
+      item: "$_id",
+      totalQuantity: 1,
+      totalSales: 1
+    } 
+  }
+]);
+
+/* Sample Output:
+
+{ item: "apple", totalQuantity: 5, totalSales: 50 }
+{ item: "orange", totalQuantity: 10, totalSales: 80 }
+{ item: "banana", totalQuantity: 10, totalSales: 50 }
+
+*/

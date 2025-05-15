@@ -1,0 +1,102 @@
+// 1. Comparison Operators
+
+// $eq (Equal)
+db.students.find({ age: { $eq: 22 } });
+
+// $ne (Not Equal)
+db.students.find({ course: { $ne: "B.Tech" } });
+
+// $gt (Greater Than)
+db.students.find({ age: { $gt: 21 } });
+
+// $gte (Greater Than or Equal)
+db.students.find({ age: { $gte: 22 } });
+
+// $lt (Less Than)
+db.students.find({ age: { $lt: 23 } });
+
+// $lte (Less Than or Equal)
+db.students.find({ age: { $lte: 22 } });
+
+// $in (In array)
+db.students.find({ course: { $in: ["BCA", "B.Sc"] } });
+
+// $nin (Not in array)
+db.students.find({ course: { $nin: ["B.Tech"] } });
+
+
+// 2. Logical Operators
+
+// $and (All conditions must be true)
+db.students.find({
+  $and: [ { age: { $gt: 20 } }, { course: "BCA" } ]
+});
+
+// $or (At least one condition must be true)
+db.students.find({
+  $or: [ { age: 22 }, { course: "BCA" } ]
+});
+
+// $not (Negates a condition)
+db.students.find({
+  age: { $not: { $gt: 21 } }
+});
+
+// $nor (None of the conditions must be true)
+db.students.find({
+  $nor: [ { age: 22 }, { course: "BCA" } ]
+});
+
+
+/* Output:
+
+// Comparison
+
+$eq
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+
+$ne
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+$gt
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+$gte
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+$lt
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+
+$lte
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+
+$in
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+$nin
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+
+// Logical
+
+$and
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+$or
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+$not
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+
+$nor
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+
+*/

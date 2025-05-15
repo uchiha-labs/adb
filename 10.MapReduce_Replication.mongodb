@@ -1,0 +1,44 @@
+// ===== Map Reduce Example =====
+
+// Sample collection: orders
+db.orders.insertMany([
+  { item: "apple", quantity: 5, price: 10 },
+  { item: "banana", quantity: 10, price: 5 },
+  { item: "apple", quantity: 15, price: 10 },
+  { item: "banana", quantity: 20, price: 5 },
+  { item: "orange", quantity: 10, price: 8 }
+]);
+
+// Map function: emit (item, quantity)
+var mapFunction = function() {
+  emit(this.item, this.quantity);
+};
+
+// Reduce function: sum quantities for each item
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+// Run mapReduce
+db.orders.mapReduce(
+  mapFunction,
+  reduceFunction,
+  {
+    out: "order_totals"
+  }
+);
+
+// Query the result collection
+db.order_totals.find();
+
+/* Sample Output:
+{ _id: "apple", value: 20 }
+{ _id: "banana", value: 30 }
+{ _id: "orange", value: 10 }
+*/
+
+// ===== Replica Set Commands =====
+rs.status();        // Shows status of replica set members
+rs.isMaster();      // Shows which node is primary
+rs.initiate();
+

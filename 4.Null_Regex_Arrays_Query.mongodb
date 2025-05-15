@@ -1,0 +1,97 @@
+// 1. Null Check and Type Check
+
+// $exists - Check if a field exists
+db.students.find({ middleName: { $exists: false } });
+
+// $type - Check BSON type (e.g. string = "string", int = "int")
+db.students.find({ age: { $type: "int" } });
+
+
+// 2. Regex (Pattern Matching)
+
+// Starts with "A"
+db.students.find({ name: { $regex: /^A/ } });
+
+// Ends with "e"
+db.students.find({ name: { $regex: /e$/ } });
+
+// Contains "oh" (case-insensitive)
+db.students.find({ name: { $regex: /oh/, $options: 'i' } });
+
+
+// 3. Array Queries
+
+// Sample document structure:
+db.students.insertOne({
+  name: "Kevin",
+  age: 24,
+  course: "BCA",
+  skills: ["JavaScript", "Python", "MongoDB"]
+});
+
+// Exact match
+db.students.find({ skills: ["JavaScript", "Python", "MongoDB"] });
+
+// Match any one element
+db.students.find({ skills: "Python" });
+
+// Match all elements (order doesn’t matter)
+db.students.find({ skills: { $all: ["Python", "MongoDB"] } });
+
+// Match based on array length
+db.students.find({ skills: { $size: 3 } });
+
+// Match element with condition (string length > 5)
+db.students.find({ "skills.0": { $regex: /.{5,}/ } });
+
+
+// 4. Array of Embedded Documents
+
+// Sample document:
+db.students.insertOne({
+  name: "Sara",
+  age: 23,
+  course: "B.Sc",
+  grades: [
+    { subject: "Math", score: 88 },
+    { subject: "Physics", score: 92 }
+  ]
+});
+
+// Match at least one embedded document with score > 90
+db.students.find({
+  "grades.score": { $gt: 90 }
+});
+
+// Match embedded document where subject is "Math" AND score is 88
+db.students.find({
+  grades: { $elemMatch: { subject: "Math", score: 88 } }
+});
+
+// Match any embedded document where subject is "Physics"
+db.students.find({
+  "grades.subject": "Physics"
+});
+
+
+/* Output:
+
+// Null & Type
+$exists
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+
+$type
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+
+// Regex
+{ _id: ObjectId("..."), name: "Alice", ... }
+{ _id: ObjectId("..."), name: "Bob", ... }
+
+// Array
+{ _id: ObjectId("..."), name: "Kevin", skills: ["JavaScript", "Python", "MongoDB"] }
+
+// Array of Embedded Docs
+{ _id: ObjectId("..."), name: "Sara", grades: [...] }
+
+*/
+

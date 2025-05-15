@@ -1,0 +1,61 @@
+// MongoDB Cursor Basics
+
+// A cursor is what `find()` returns. It's a pointer to the result set.
+// You can iterate, limit, sort, and modify its behavior.
+
+// 1. Basic Cursor Usage
+const cursor = db.students.find();
+cursor.forEach(doc => printjson(doc));
+
+// 2. Convert Cursor to Array
+const results = db.students.find().toArray();
+printjson(results);
+
+// 3. Using limit(), skip(), and sort()
+db.students.find().limit(2); // First 2 documents
+
+db.students.find().skip(2); // Skip first 2 documents
+
+db.students.find().sort({ age: 1 }); // Ascending by age
+
+db.students.find().sort({ age: -1 }).limit(2); // Top 2 oldest students
+
+// 4. Count documents (without fetching all)
+db.students.countDocuments(); // Preferred method
+db.students.find().count(); // Deprecated (older versions)
+
+
+// 5. Iterate cursor using while loop
+const cursor2 = db.students.find();
+while (cursor2.hasNext()) {
+  printjson(cursor2.next());
+}
+
+
+/* Sample Output:
+
+1. Basic find/forEach
+{ _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" }
+{ _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" }
+{ _id: ObjectId("..."), name: "Bob", age: 23, course: "BCA" }
+
+2. toArray()
+[
+  { _id: ObjectId("..."), name: "John", age: 21, course: "B.Tech" },
+  { _id: ObjectId("..."), name: "Alice", age: 22, course: "B.Sc" },
+  ...
+]
+
+3. sort(), limit(), skip()
+{ _id: ObjectId("..."), name: "John", age: 21 }
+{ _id: ObjectId("..."), name: "Alice", age: 22 }
+
+4. countDocuments()
+3
+
+5. while loop with cursor
+{ _id: ObjectId("..."), name: "John", age: 21 }
+{ _id: ObjectId("..."), name: "Alice", age: 22 }
+...
+
+*/

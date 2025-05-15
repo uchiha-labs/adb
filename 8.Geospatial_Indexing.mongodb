@@ -1,0 +1,43 @@
+// ===== MongoDB Geospatial Indexing =====
+
+// 1. Create a collection with geospatial index on 'location' field
+db.places.createIndex({ location: "2dsphere" });
+
+// 2. Insert sample documents with GeoJSON points
+db.places.insertMany([
+  {
+    name: "Central Park",
+    location: { type: "Point", coordinates: [-73.9654, 40.7829] }
+  },
+  {
+    name: "Times Square",
+    location: { type: "Point", coordinates: [-73.9855, 40.7580] }
+  },
+  {
+    name: "Empire State Building",
+    location: { type: "Point", coordinates: [-73.9857, 40.7484] }
+  }
+]);
+
+// 3. Query: Find places near a coordinate (longitude, latitude)
+// Find places within 2 kilometers of Times Square
+db.places.find({
+  location: {
+    $near: {
+      $geometry: {
+        type: "Point",
+        coordinates: [-73.9855, 40.7580]
+      },
+      $maxDistance: 2000  // in meters
+    }
+  }
+});
+
+/* Sample Output:
+
+{ _id: ObjectId("..."), name: "Times Square", location: { type: "Point", coordinates: [-73.9855, 40.7580] } }
+{ _id: ObjectId("..."), name: "Empire State Building", location: { type: "Point", coordinates: [-73.9857, 40.7484] } }
+{ _id: ObjectId("..."), name: "Central Park", location: { type: "Point", coordinates: [-73.9654, 40.7829] } }
+
+Note: Results are ordered by proximity.
+*/
