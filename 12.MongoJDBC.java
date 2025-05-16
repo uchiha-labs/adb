@@ -17,8 +17,8 @@ public class MongoDBConnect {
         mongoClient.close();
     }
 }
-```
+/**output
 {"_id": 1, "name": "John",  "age": 21}
 {"_id": 2, "name": "Alice", "age": 22}
 {"_id": 3, "name": "Bob",   "age": 23}
-```
+**/
