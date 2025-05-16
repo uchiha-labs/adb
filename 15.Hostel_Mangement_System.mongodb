@@ -58,26 +58,6 @@ db.allocations.aggregate([
   }
 ]);
 
-
-// Update Operations
-db.students.updateOne(
-  { name: "John" },
-  { $set: { contact: "9990011223" } }
-);
-
-// Increase room occupancy
-db.rooms.updateOne(
-  { _id: 102 },
-  { $inc: { occupied: 1 } }
-);
-
-// Delete Operations
-db.students.deleteOne({ name: "Bob" });
-
-// Delete all allocations for a room
-db.allocations.deleteMany({ roomId: 103 });
-
-
 /* Sample Output:
 { "_id" : 1, "name" : "John", "age" : 21, "gender" : "Male", "course" : "B.Tech", "contact" : "9876543210" }
 { "_id" : 2, "name" : "Alice", "age" : 22, "gender" : "Female", "course" : "B.Sc", "contact" : "8765432109" }
